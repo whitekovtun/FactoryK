@@ -1,0 +1,7 @@
+node_modules/
+*.log
+*-check.png
+__pycache__/
+.env
+.env.*
+!.env.example

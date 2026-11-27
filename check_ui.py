@@ -1,0 +1,21 @@
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True, channel='msedge')
+    page = browser.new_page(viewport={"width": 1440, "height": 1000})
+    page.goto('http://127.0.0.1:3000/admin', wait_until='networkidle')
+    assert page.get_by_role('heading', name='Операционный обзор.').is_visible()
+    page.get_by_role('button', name='30 дней').click()
+    assert page.get_by_text('1 042 380').is_visible()
+    page.get_by_role('button', name='Новая идея').click()
+    page.get_by_label('Название идеи').fill('Проверочная идея')
+    page.get_by_role('button', name='Сохранить идею').click()
+    page.get_by_role('button', name='Производство', exact=False).first.click()
+    assert page.get_by_text('Проверочная идея').is_visible()
+    page.get_by_role('button', name='Обзор', exact=False).first.click()
+    page.screenshot(path='desktop-check.png', full_page=True)
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.screenshot(path='mobile-check.png', full_page=True)
+    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
+    print('Desktop and mobile checks passed')
+    browser.close()
