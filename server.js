@@ -2,9 +2,10 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const root = __dirname;
-const files = { '/': 'index.html', '/admin': 'index.html', '/admin/': 'index.html', '/styles.css': 'styles.css', '/app.js': 'app.js' };
+const files = { '/': 'index.html', '/admin/': 'admin/index.html', '/styles.css': 'styles.css', '/app.js': 'app.js' };
 http.createServer((req, res) => {
   const pathname = new URL(req.url, 'http://localhost').pathname;
+  if (pathname === '/admin') { res.writeHead(302, { Location: '/admin/' }); return res.end(); }
   const file = files[pathname];
   if (!file) { res.writeHead(404); return res.end('Not found'); }
   const type = file.endsWith('.css') ? 'text/css' : file.endsWith('.js') ? 'text/javascript' : 'text/html';
